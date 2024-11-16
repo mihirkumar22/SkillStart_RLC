@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useUserRole } from '../../contexts/UserContext';
 import { Card, Button, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
@@ -9,6 +10,7 @@ function Home() {
 
     const { user, logout } = useAuth();
     const navigate = useNavigate();
+    const { role } = useUserRole();
 
     async function handleLogout(e) {
         e.preventDefault();
@@ -32,7 +34,7 @@ function Home() {
                 <Card.Title>Home Page</Card.Title>
                 {user ? (
                     <>
-                        <Card.Text>Hello, {user.email}!</Card.Text>
+                        <Card.Text>Hello, {user.email}! You are a {role}</Card.Text>
                         {error && <Alert>{error}</Alert>}
                         <Button disabled={loading} onClick={handleLogout}>{loading ? "Logging Out..." : "Log Out"}</Button>
                     </>
