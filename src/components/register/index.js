@@ -2,10 +2,12 @@ import React, { useRef, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Card, Form, Button, Alert } from 'react-bootstrap';
 import { useAuth } from '../../contexts/AuthContext';
+import RoleToggle from './RoleToggle'
 
 function Register() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [role, setRole] = useState('student');
 
     const emailRef = useRef();
     const passwordRef = useRef();
@@ -20,21 +22,20 @@ function Register() {
         setError('');
 
         try {
-            await register(emailRef.current.value, passwordRef.current.value);
-
+            await register(emailRef.current.value, passwordRef.current.value, role);
             navigate('/home');
         } catch (err) {
-            // setError('Failed to create an account. Please try again.');
-            setError(err.message);
+            setError('Failed to create an account. Please try again.');
         }
-        
+
         setLoading(false);
     }
 
     return (
         <Card>
             <Card.Body>
-                <Card.Title>Sign up</Card.Title>
+                <RoleToggle role={role} setRole={setRole}/>
+                <Card.Title>{role === 'student' ? 'Student' : 'Employer'} Registration</Card.Title>
                 {error && <Alert variant="danger">{error}</Alert>}
                 <Form onSubmit={handleSubmit}>
                     <Form.Group controlId="email">
@@ -44,7 +45,7 @@ function Register() {
                     <Form.Group controlId="password">
                         <Form.Label>Password</Form.Label>
                         <Form.Control type="password" placeholder="Enter password" ref={passwordRef} />
-                    </Form.Group>
+                    </Form.Group>   
                     <Button disabled={loading} type="submit">
                         {loading ? 'Signing Up...' : 'Sign Up'}
                     </Button>
@@ -52,7 +53,7 @@ function Register() {
                 <Card.Text>Already have an account? <Link to="/login">Log in!</Link></Card.Text>
             </Card.Body>
         </Card>
-    )
+    );
 }
 
 export default Register;

@@ -12,13 +12,13 @@ export function useAuth() {
 export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
 
-    async function register(email, password) {
+    async function register(email, password, role) {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
 
         await setDoc(doc(db, 'users', user.uid), {
             email: user.email,
-            role: 'student',
+            role: role
         })
     }
 

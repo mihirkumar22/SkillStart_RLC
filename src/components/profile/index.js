@@ -2,41 +2,35 @@ import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useUserRole } from '../../contexts/UserContext';
 import { Card, Button } from 'react-bootstrap';
+import EmployerProfile from './EmployerProfile';
 import { useNavigate } from 'react-router-dom';
-import EmployerHome from './EmployerHome';
 
-function Home() {
-    const [loading, setLoading] = useState(false);
+function Profile() {
+    const [editProfile, setEditProfile] = useState(false);
+    const [ logoutLoading , setLogoutLoading ] = useState(false);
 
-    const { user, logout } = useAuth();
     const { role } = useUserRole();
+    const { user, logout } = useAuth();
+
     const navigate = useNavigate();
 
-
-    async function handleLogout(e) {
-        e.preventDefault();
-
-        setLoading(true);
-
+    const handleLogout = async () => {
+        setLogoutLoading(true);
         await logout();
         navigate('/login')
-
-        setLoading(false);
+        setLogoutLoading(false)
     }
 
     return (
         <Card>
             <Card.Body>
-                <Card.Header className="d-flex">
-                    <Card.Title>Home Page</Card.Title>
-                    <Button onClick={() => navigate('/profile')}>Profile</Button>
-                </Card.Header>
+                <Card.Title>Your Profile</Card.Title>
                 {user ? (
                     <>
-                        {role === 'employer' && (
-                            <EmployerHome user={user} />
+                        {role === "employer" && (
+                            <EmployerProfile />
                         )}
-                        <Button disabled={loading} onClick={handleLogout}>{loading ? "Logging Out..." : "Log Out"}</Button>
+                    <Button disabled={logoutLoading} onClick={handleLogout}>{logoutLoading ? "Logging Out..." : "Log Out"}</Button>
                     </>
                 ) : (
                     <>
@@ -49,4 +43,4 @@ function Home() {
     )
 }
 
-export default Home;
+export default Profile;

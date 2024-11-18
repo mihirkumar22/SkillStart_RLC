@@ -11,12 +11,16 @@ export function useUserRole() {
 
 export function UserRoleProvider({ children }) {
     const [role, setRole] = useState(null);
+    const [loading, setLoading] = useState(false);
     const { user } = useAuth();
 
     useEffect(() => {
         if (user) {
             const fetchRole = async () => {
                 const userRef = doc(db, 'users', user.uid);
+                
+                setLoading(true);
+                
                 const userDoc = await getDoc(userRef);
 
                 if (userDoc.exists()) {
@@ -24,6 +28,8 @@ export function UserRoleProvider({ children }) {
                 } else {
                     setRole(null);
                 }
+
+                setLoading(false);
             }
 
             fetchRole();
@@ -33,7 +39,8 @@ export function UserRoleProvider({ children }) {
     }, [user])
 
     const value = {
-        role
+        role, 
+        loading
     }
 
     return (
