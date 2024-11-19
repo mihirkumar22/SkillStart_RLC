@@ -3,14 +3,26 @@ import { Card, Button, Modal, Form } from 'react-bootstrap';
 import ReactQuill from 'react-quill';
 import "react-quill/dist/quill.snow.css";
 import { db } from "../../firebase";
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, doc, getDoc } from 'firebase/firestore';
 
 function EmployerHome({ user }) {
     const [show, setShow] = useState(false);
-    const [formData, setFormData] = useState({ uid: user.uid, title: "", companyName: "", address: "", jobDescription: "" })
+    const [formData, setFormData] = useState({ uid: user.uid, title: "", companyName: "", location: "", address: "", jobDescription: "" })
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+
+    const handleAutoFill = async () => {
+        const userRef = doc(db, 'users', user.uid);
+        const userDoc = await getDoc(userRef);
+        const userData = userDoc.data();
+        setFormData((prev) => ({ 
+            ...prev,
+            companyName: userData.companyName || "",
+            location: userData.location || "",
+            address: userData.address || ""
+         }))
+    }
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -27,8 +39,20 @@ function EmployerHome({ user }) {
         try {
             await addDoc(collection(db, "postings"), {
                 ...formData,
-                status: "unapproved"
+                status: "unapproved",
+                datePublished: new Date().toISOString(),
+                applicants: ["placeholder", "placeholder"]
             })
+
+            setFormData({ 
+                uid: user.uid, 
+                title: "", 
+                companyName: "", 
+                location: "", 
+                address: "", 
+                jobDescription: "", 
+            });
+
             handleClose();
         } catch (err) {
             console.error(err);
@@ -38,6 +62,7 @@ function EmployerHome({ user }) {
     return (
         <Card>
             <Card.Body>
+                <Card.Title>Home Page</Card.Title>
                 <Card.Text>Hello, {user.email}! You are an employer.</Card.Text>
                 <Button onClick={handleShow}>+ Make a new posting</Button>
 
@@ -68,6 +93,15 @@ function EmployerHome({ user }) {
                                     required
                                 />
                                 <Form.Control
+                                    name="location"
+                                    value={formData.location}
+                                    type="text"
+                                    placeholder="Location"
+                                    maxLength={50}
+                                    onChange={handleChange}
+                                    required
+                                />
+                                <Form.Control
                                     name="address"
                                     value={formData.address}
                                     type="text"
@@ -76,7 +110,7 @@ function EmployerHome({ user }) {
                                     onChange={handleChange}
                                     required
                                 />
-                                <Button >Replace with defaults?</Button>
+                                <Button onClick={handleAutoFill}>Replace with defaults?</Button>
                             </Form.Group>
                             <Form.Group controlId="jobDescription">
                                 <Form.Label>Job Description</Form.Label>

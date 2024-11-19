@@ -4,6 +4,7 @@ import { useUserRole } from '../../contexts/UserContext';
 import { Card, Button } from 'react-bootstrap';
 import EmployerProfile from './EmployerProfile';
 import { useNavigate } from 'react-router-dom';
+import NavBar from '../navbar';
 
 function Profile() {
     const [editProfile, setEditProfile] = useState(false);
@@ -24,11 +25,13 @@ function Profile() {
     return (
         <Card>
             <Card.Body>
-                <Card.Title>Your Profile</Card.Title>
+                <Card.Header>
+                    <NavBar role={role}/>
+                </Card.Header>
                 {user ? (
                     <>
                         {role === "employer" && (
-                            <EmployerProfile />
+                            <EmployerProfile user={user} editProfile={setEditProfile} />
                         )}
                     <Button disabled={logoutLoading} onClick={handleLogout}>{logoutLoading ? "Logging Out..." : "Log Out"}</Button>
                     </>

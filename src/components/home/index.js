@@ -4,6 +4,7 @@ import { useUserRole } from '../../contexts/UserContext';
 import { Card, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import EmployerHome from './EmployerHome';
+import NavBar from '../navbar';
 
 function Home() {
     const [loading, setLoading] = useState(false);
@@ -11,7 +12,7 @@ function Home() {
     const { user, logout } = useAuth();
     const { role } = useUserRole();
     const navigate = useNavigate();
-
+    console.log(user);
 
     async function handleLogout(e) {
         e.preventDefault();
@@ -27,9 +28,8 @@ function Home() {
     return (
         <Card>
             <Card.Body>
-                <Card.Header className="d-flex">
-                    <Card.Title>Home Page</Card.Title>
-                    <Button onClick={() => navigate('/profile')}>Profile</Button>
+                <Card.Header>
+                    <NavBar role={role}/>
                 </Card.Header>
                 {user ? (
                     <>

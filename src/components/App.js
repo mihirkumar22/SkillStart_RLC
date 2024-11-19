@@ -8,6 +8,8 @@ import Register from './register';
 import Login from './login';
 import Home from './home';
 import Profile from './profile';
+import EmployerPostings from './employerPostings';
+import Applicants from './employerPostings/applicants';
 
 function App() {
     return (
@@ -17,6 +19,8 @@ function App() {
                     <Route path="/login" element={<Login />} />
                     <Route path="/home" element={<Home />} />
                     <Route path="/profile" element={<Profile />} />
+                    <Route path="/employer-postings" element={<EmployerPostings />} />
+                    <Route path="/employer-postings/applicants" element={<Applicants />} />
                     <Route path="/" element={<Register />} />
                 </Routes>
             </Router>
