@@ -3,6 +3,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useUserRole } from '../../contexts/UserContext';
 import { Card, Button } from 'react-bootstrap';
 import EmployerProfile from './EmployerProfile';
+import StudentProfile from './StudentProfile';
 import { useNavigate } from 'react-router-dom';
 import NavBar from '../navbar';
 
@@ -31,7 +32,10 @@ function Profile() {
                 {user ? (
                     <>
                         {role === "employer" && (
-                            <EmployerProfile user={user} editProfile={setEditProfile} />
+                            <EmployerProfile user={user} />
+                        )}
+                        {role === "student" && (
+                            <StudentProfile user={user} />
                         )}
                     <Button disabled={logoutLoading} onClick={handleLogout}>{logoutLoading ? "Logging Out..." : "Log Out"}</Button>
                     </>

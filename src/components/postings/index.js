@@ -1,42 +1,34 @@
-import React, { useState, useEffect } from 'react';
-import NavBar from '../navbar';
-import { Card, Button } from 'react-bootstrap';
+import React, { useState, useEffect } from "react";
+import { Button, Card } from "react-bootstrap";
+import { collection, query, where, getDocs, doc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
+import { db } from "../../firebase";
+import NavBar from "../navbar";
+import { useUserRole } from '../../contexts/UserContext';
+import ReactQuill from "react-quill";
+import { format } from "date-fns"
 import { useAuth } from '../../contexts/AuthContext';
-import { db } from '../../firebase';
-import { collection, query, where, getDocs, deleteDoc, doc } from 'firebase/firestore';
-import ReactQuill from 'react-quill';
-import { format } from 'date-fns';
-import { useNavigate } from 'react-router-dom';
 
-function EmployerPostings() {
-    const { user } = useAuth();
-    const [postings, setPostings] = useState([]);
+function Postings() {
     const [loading, setLoading] = useState(false);
+    const [postings, setPostings] = useState([]);
+    const [applyLoading, setApplyLoading] = useState(false);
 
-    const navigate = useNavigate();
-
-    const handleDelete = async (id) => {
-        try {
-            await deleteDoc(doc(db, 'postings', id));
-            setPostings((prev) => prev.filter((posting) => posting.id !== id))
-        } catch (err) {
-            console.error("error deleting posting", err)
-        }
-    }
+    const { role } = useUserRole();
+    const { user } = useAuth();
 
     useEffect(() => {
         const fetchPostings = async () => {
             setLoading(true);
             try {
                 const postingsRef = collection(db, 'postings');
-                const q = query(postingsRef, where('uid', "==", user.uid));
+                const q = query(postingsRef, where('status', "==", "approved"))
                 const querySnapshot = await getDocs(q);
 
-                const userPostings = querySnapshot.docs.map((doc) => ({
+                const postings = querySnapshot.docs.map((doc) => ({
                     id: doc.id,
                     ...doc.data()
                 }))
-                setPostings(userPostings)
+                setPostings(postings);
             } catch (err) {
                 console.error('error fetching postings', err)
             } finally {
@@ -49,33 +41,65 @@ function EmployerPostings() {
 
     const handleDate = (datePublished) => {
         if (datePublished) {
-            const date = new Date(datePublished);
+            const date = new Date(datePublished)
             return format(date, "EEE, MMM dd, yyyy")
         }
         return "Date not available"
     }
 
-    const handleViewApplicants = (posting) => {
-        navigate("/employer-postings/applicants", { state: { posting } });
+    const handleApply = async (posting) => {
+        const postingDoc = doc(db, 'postings', posting.id)
+        
+        setApplyLoading(true);
+        
+        if (posting.applicants.includes(user.uid)) {
+            await updateDoc(postingDoc, { applicants: arrayRemove(user.uid) });
+            
+            setPostings((prev) =>
+                prev.map((p) =>
+                    p.id === posting.id
+                        ? { ...p, applicants: p.applicants.filter((id) => id !== user.uid) }
+                        : p
+                )
+            )
+        } else {
+            await updateDoc(postingDoc, { applicants: arrayUnion(user.uid) });
+            
+            setPostings((prev) =>
+                prev.map((p) =>
+                    p.id === posting.id
+                        ? { ...p, applicants: [p.applicants, user.uid] }
+                        : p
+                )
+            )
+        }
+
+        setApplyLoading(false);
     }
 
     return (
         <Card>
             <Card.Body>
                 <Card.Header>
-                    <NavBar role="employer" />
+                    <NavBar role={role} />
                 </Card.Header>
-                <Card.Title>Your postings</Card.Title>
+                <Card.Title>Job Postings</Card.Title>
                 {loading ? (
-                    <Card.Text>Loading postings...</Card.Text>
+                    <Card.Text>Loading...</Card.Text>
                 ) : postings.length > 0 ? (
                     postings.map((posting) => (
                         <Card key={posting.id}>
                             <Card.Body>
                                 <Card.Header className="d-flex">
                                     <Card.Title>{posting.title}</Card.Title>
-                                    <Button variant="danger" onClick={() => { handleDelete(posting.id) }}>Remove Posting</Button>
-                                    <Button onClick={() => {handleViewApplicants(posting)}}>View Applicants</Button>
+                                    {role === "student" && (
+                                        <Button
+                                            disabled={applyLoading}
+                                            onClick={() => handleApply(posting)}
+                                        >
+                                            {applyLoading ? "Loading..." : posting.applicants.includes(user.uid) ? "Unapply" : "Apply"}
+                                        </Button>
+                                    )}
                                 </Card.Header>
                                 <Card.Text>
                                     Location: {posting.location} <br />
@@ -104,4 +128,4 @@ function EmployerPostings() {
     )
 }
 
-export default EmployerPostings;
+export default Postings;

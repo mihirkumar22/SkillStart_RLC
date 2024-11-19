@@ -5,6 +5,7 @@ import { Card, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import EmployerHome from './EmployerHome';
 import NavBar from '../navbar';
+import StudentHome from "./StudentHome";
 
 function Home() {
     const [loading, setLoading] = useState(false);
@@ -35,6 +36,9 @@ function Home() {
                     <>
                         {role === 'employer' && (
                             <EmployerHome user={user} />
+                        )}
+                        {role === 'student' && (
+                            <StudentHome user={user} />
                         )}
                         <Button disabled={loading} onClick={handleLogout}>{loading ? "Logging Out..." : "Log Out"}</Button>
                     </>

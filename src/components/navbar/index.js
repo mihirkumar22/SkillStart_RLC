@@ -11,6 +11,7 @@ function NavBar({ role }) {
                 <Card.Header>
                     <Button onClick={() => {navigate('/home')}}>Home</Button>
                     <Button onClick={() => {navigate('/profile')}}>Profile</Button>
+                    <Button onClick={() => {navigate('/postings')}}>Postings</Button>
                     { role === "employer" && (
                         <>
                             <Button onClick={() => {navigate('/employer-postings')}}>Your postings</Button>

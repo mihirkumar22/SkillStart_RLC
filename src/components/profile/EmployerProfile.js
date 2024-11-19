@@ -50,6 +50,7 @@ function EmployerProfile({ user }) {
                             onChange={handleFormChange}
                             disabled={!edit}
                         />
+                        <Form.Label>Your Company Location</Form.Label>
                         <Form.Control
                             name="location"
                             value={formData.location}
@@ -57,6 +58,7 @@ function EmployerProfile({ user }) {
                             onChange={handleFormChange}
                             disabled={!edit}
                         />
+                        <Form.Label>Your Company Address</Form.Label>
                         <Form.Control
                             name="address"
                             value={formData.address}
