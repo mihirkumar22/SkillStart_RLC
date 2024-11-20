@@ -1,5 +1,7 @@
 import React from 'react';
 import { ToggleButtonGroup, ToggleButton } from 'react-bootstrap';
+import styles from "./register.module.css" 
+
 
 function RoleToggle({role, setRole}) {
     function handleChange(value) {
