@@ -18,7 +18,8 @@ export function AuthProvider({ children }) {
 
         await setDoc(doc(db, 'users', user.uid), {
             email: user.email,
-            role: role
+            role: role,
+            ...(role === 'employer' && { savedStudents: []})
         })
     }
 

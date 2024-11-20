@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import EmployerHome from './EmployerHome';
 import NavBar from '../navbar';
 import StudentHome from "./StudentHome";
+import AdminHome from "./AdminHome";
 
 function Home() {
     const [loading, setLoading] = useState(false);
@@ -39,6 +40,9 @@ function Home() {
                         )}
                         {role === 'student' && (
                             <StudentHome user={user} />
+                        )}
+                        {role === 'admin' && (
+                            <AdminHome user={user} />
                         )}
                         <Button disabled={loading} onClick={handleLogout}>{loading ? "Logging Out..." : "Log Out"}</Button>
                     </>

@@ -10,8 +10,9 @@ import Home from './home';
 import Profile from './profile';
 import EmployerPostings from './employerPostings';
 import Applicants from './employerPostings/applicants';
-import ViewProfile from './employerPostings/applicants/viewProfile'
+import ViewProfile from './viewProfile'
 import Postings from './postings';
+import SavedStudents from './savedStudents';
 
 function App() {
     return (
@@ -23,8 +24,9 @@ function App() {
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/employer-postings" element={<EmployerPostings />} />
                     <Route path="/employer-postings/applicants" element={<Applicants />} />
-                    <Route path="/employer-postings/applicants/view-profile" element={<ViewProfile />} />
                     <Route path="/postings" element={<Postings />} />
+                    <Route path="/view-profile/:userId" element={<ViewProfile />} />
+                    <Route path="/saved-students" element={<SavedStudents />}/>
                     <Route path="/" element={<Register />} />
                 </Routes>
             </Router>

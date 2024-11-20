@@ -31,7 +31,7 @@ function Applicants() {
                         const userDoc = doc(db, 'users', uid);
                         const userSnapshot = await getDoc(userDoc);
                         if (userSnapshot.exists()) {
-                            return userSnapshot.data();
+                            return { id: uid, ...userSnapshot.data() }
                         }
                     })
                 )
@@ -61,8 +61,7 @@ function Applicants() {
                         applicantsData.map((applicant, index) => 
                         <Card.Text key={index}>
                             <Link
-                                to="/employer-postings/applicants/view-profile"
-                                state={{ applicant }}
+                                to={`/view-profile/${applicant.id}`}
                             >
                                 {applicant.username}
                             </Link>

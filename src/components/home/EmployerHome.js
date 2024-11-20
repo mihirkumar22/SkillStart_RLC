@@ -7,7 +7,15 @@ import { collection, addDoc, doc, getDoc } from 'firebase/firestore';
 
 function EmployerHome({ user }) {
     const [show, setShow] = useState(false);
-    const [formData, setFormData] = useState({ uid: user.uid, title: "", companyName: "", location: "", address: "", jobDescription: "" })
+    const [formData, setFormData] = useState({
+        uid: user.uid,
+        title: "",
+        companyName: "",
+        location: "",
+        address: "",
+        jobDescription: "",
+        selectedTags: []
+    });
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -51,12 +59,26 @@ function EmployerHome({ user }) {
                 location: "", 
                 address: "", 
                 jobDescription: "", 
+                selectedTags: []
             });
 
             handleClose();
         } catch (err) {
             console.error(err);
         }
+    }
+
+    const tags = ["tag 1", "tag 2", "tag 3", "tag 4", "tag 5"]
+
+    const handleTagChange = async (tag) => {
+        const prevSelectedTags = formData.selectedTags;
+        setFormData((prev) =>  {
+            if (prevSelectedTags.includes(tag)) {
+                return { ...prev, selectedTags: prevSelectedTags.filter(t => t != tag)}; 
+            } else {
+                return { ...prev, selectedTags: [ ...prevSelectedTags, tag ]};
+            }
+        })
     }
 
     return (
@@ -122,6 +144,19 @@ function EmployerHome({ user }) {
                                         onChange={handleDescriptionChange}
                                     />
                                 </div>
+                            </Form.Group>
+                            <Form.Group controlId="tags">
+                                <Form.Label>Tags</Form.Label>
+                                {tags.map((tag) => (
+                                    <Button
+                                        key={tag}
+                                        type="checkbox"
+                                        variant={formData.selectedTags.includes(tag) ? "primary" : "secondary"}
+                                        onClick={() => handleTagChange(tag)}
+                                    >
+                                        {tag}
+                                    </Button>
+                                ))}
                             </Form.Group>
                             <Button variant="primary" type="submit">Submit Job</Button>
                         </Form>
