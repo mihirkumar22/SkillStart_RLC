@@ -25,7 +25,6 @@ function App() {
                     <Route path="/employer-postings/applicants" element={<Applicants />} />
                     <Route path="/employer-postings/applicants/view-profile" element={<ViewProfile />} />
                     <Route path="/postings" element={<Postings />} />
-                    <Route path="/" element={<Register />} />
                 </Routes>
             </Router>
     )

@@ -1,0 +1,48 @@
+/* Parent container to center the card */
+.centerContainer {
+    display: flex;               /* Enables flexbox */
+    justify-content: center;     /* Centers the card horizontally */
+    align-items: center;         /* Centers the card vertically */
+    height: 100vh;               /* Full viewport height */
+    padding: 20px;               /* Adds space on smaller screens */
+}
+
+/* Optional card styling */
+.nest {
+    width: 100%;                 /* Full width for responsiveness */
+    max-width: 400px;            /* Limits the card's maximum width */
+    border-radius: 10px;         /* Smooth corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Adds subtle shadow */
+    border: none; 
+    background-color: rgba(255, 255, 255, .5);
+}
+
+/* Optional button styling */
+.hi {
+    width: 100%;                 /* Makes the button full-width */
+    margin-top: 15px;            /* Adds spacing above the button */
+}
+
+
+.pookie {
+    justify-content: center;    /* Centers text horizontally */
+    align-items: center;        /* Centers text vertically */
+    text-align: center;         /* Ensures text inside is center-aligned */
+    height: 100%;               /* Ensures it takes full height of the container */
+    padding: 5px;              /* Optional: Adds some spacing inside */
+    padding-top: 10px;
+    background-color: rgba(5, 79, 18, 0.99);  /* Optional: Light background for visibility */
+    border-radius: 5px;         /* Optional: Rounded edges */
+    color: white; 
+    
+}
+
+.bear {
+    display: flex;           /* Use flexbox for layout */
+    width: auto;             /* Allow width to adjust based on content */
+    flex-grow: 1;            /* Allow it to grow and take available space */
+    justify-content: center; /* Centers the content horizontally */
+    align-items: center;     /* Centers the content vertically */
+    padding: 5px 15px;       /* Optional: Adds some padding */
+}
+
