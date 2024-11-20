@@ -10,6 +10,7 @@ import Home from './home';
 import Profile from './profile';
 import EmployerPostings from './employerPostings';
 import Applicants from './employerPostings/applicants';
+import ViewProfile from './employerPostings/applicants/viewProfile'
 import Postings from './postings';
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/employer-postings" element={<EmployerPostings />} />
                     <Route path="/employer-postings/applicants" element={<Applicants />} />
+                    <Route path="/employer-postings/applicants/view-profile" element={<ViewProfile />} />
                     <Route path="/postings" element={<Postings />} />
                     <Route path="/" element={<Register />} />
                 </Routes>

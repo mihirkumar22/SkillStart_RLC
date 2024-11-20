@@ -41,7 +41,7 @@ function EmployerHome({ user }) {
                 ...formData,
                 status: "unapproved",
                 datePublished: new Date().toISOString(),
-                applicants: ["placeholder", "placeholder"]
+                applicants: []
             })
 
             setFormData({ 
