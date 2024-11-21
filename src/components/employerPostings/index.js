@@ -12,10 +12,18 @@ function EmployerPostings() {
     const { user } = useAuth();
     const [postings, setPostings] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [hideApproved, setHideApproved] = useState(false);
+    const [hideUnapproved, setHideUnapproved] = useState(false);
+    const [tagsEnabled, setTagsEnabled] = useState([]);
 
     const navigate = useNavigate();
 
     const handleDelete = async (id) => {
+        const confirmDelete = window.confirm("Are you sure you want to delete this posting?");
+        if (!confirmDelete) {
+            return;
+        }
+
         try {
             await deleteDoc(doc(db, 'postings', id));
             setPostings((prev) => prev.filter((posting) => posting.id !== id))
@@ -25,6 +33,10 @@ function EmployerPostings() {
     }
 
     useEffect(() => {
+        if (!user) {
+            return <Card.Text>Loading user data...</Card.Text>;
+        }
+
         const fetchPostings = async () => {
             setLoading(true);
             try {
@@ -45,7 +57,7 @@ function EmployerPostings() {
         }
 
         fetchPostings();
-    }, [])
+    }, [user, user.uid])
 
     const handleDate = (datePublished) => {
         if (datePublished) {
@@ -59,46 +71,105 @@ function EmployerPostings() {
         navigate("/employer-postings/applicants", { state: { posting } });
     }
 
+    const toggleVisibility = (type) => {
+        if (type === "approved") {
+            setHideApproved((prevState) => !prevState);
+        }
+        if (type === "unapproved") {
+            setHideUnapproved((prevState) => !prevState);
+        }
+    }
+
+    const tags = ["tag 1", "tag 2", "tag 3", "tag 4", "tag 5"]
+
+    const toggleTag = (tag) => {
+        if (!tagsEnabled.includes(tag)) {
+            setTagsEnabled((prev) => [...prev, tag]);
+        } else {
+            setTagsEnabled((prev) => prev.filter((t) => t !== tag));
+        }
+    }
+
+    useEffect(() => {
+        setPostings((prev) =>
+            prev.map((posting) => ({
+                ...posting,
+                isVisible: tagsEnabled.length === 0
+                    ? true
+                    : posting.selectedTags?.some((tag) => tagsEnabled.includes(tag)) || false
+            }))
+        )
+    }, [tagsEnabled]);
+
     return (
         <Card>
-            <Card.Body>
-                <Card.Header>
+            <Card.Body className='d-flex align-items-center flex-column'>
+                <Card.Header className="w-100">
                     <NavBar role="employer" />
                 </Card.Header>
-                <Card.Title>Your postings</Card.Title>
+                <Card.Title style={{ marginTop: '0.1em', fontSize: '2em' }}>Your postings</Card.Title>
+                <div style={{ display: 'flex', flexDirection: 'row', marginBottom: '1em' }}>
+                    {tags.map((tag) => (
+                        <Button
+                            key={tag}
+                            variant={tagsEnabled.includes(tag) ? "success" : "secondary"}
+                            onClick={() => { toggleTag(tag) }}
+                            style={{ marginLeft: '0.5em', marginRight: '0.5em' }}
+                        >
+                            {tag}
+                        </Button>
+                    ))}
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'row', marginBottom: '1em' }}>
+                    <Button style={{ marginLeft: '0.5em', marginRight: '0.5em' }} onClick={() => toggleVisibility('approved')}>{hideApproved ? "Show Approved Posts" : "Hide Approved Posts"}</Button>
+                    <Button style={{ marginLeft: '0.5em', marginRight: '0.5em' }} onClick={() => toggleVisibility('unapproved')}>{hideUnapproved ? "Show Unapproved Posts" : "Hide Unapproved Posts"}</Button>
+                </div>
                 {loading ? (
                     <Card.Text>Loading postings...</Card.Text>
                 ) : postings.length > 0 ? (
-                    postings.map((posting) => (
-                        <Card key={posting.id}>
-                            <Card.Body>
-                                <Card.Header className="d-flex">
-                                    <Card.Title>{posting.title}</Card.Title>
-                                    <Button variant="danger" onClick={() => { handleDelete(posting.id) }}>Remove Posting</Button>
-                                    <Button onClick={() => {handleViewApplicants(posting)}}>View Applicants</Button>
-                                </Card.Header>
-                                <Card.Text>
-                                    Location: {posting.location} <br />
-                                    Address: {posting.address} <br />
-                                    Status: {posting.status} <br />
-                                    <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
-                                        <h5>Description:</h5>
-                                        <ReactQuill
-                                            value={posting.jobDescription}
-                                            readOnly
-                                            theme="snow"
-                                            modules={{ toolbar: false }}
-                                        />
-                                    </div>
-                                    Date Published: {handleDate(posting.datePublished)}
-                                </Card.Text>
-                            </Card.Body>
-                        </Card>
-                    ))
+                    postings
+                        .filter((posting) => posting.isVisible !== false)
+                        .map((posting) => (
+                            (posting.status === "approved" && !hideApproved) ||
+                                (posting.status === "unapproved" && !hideUnapproved) ? (
+                                <Card style={{ borderWidth: '2px', width: '50vw', marginBottom: '2em' }} key={posting.id}>
+                                    <Card.Body>
+                                        <Card.Header className="d-flex align-items-center">
+                                            <Button style={{ width: '250px' }} variant="danger" onClick={() => { handleDelete(posting.id) }}>Remove Posting</Button>
+                                            <Card.Title className='w-100 text-center'><strong>{posting.title}</strong></Card.Title>
+                                            <Button variant="success" style={{ width: '250px' }} onClick={() => { handleViewApplicants(posting) }}>View Applicants</Button>
+                                        </Card.Header>
+                                        <Card.Text>
+                                            <div style={{ width: '100%', display: 'flex', flexDirection: 'row', marginBottom: '0.5em', marginTop: '1em' }}>
+                                                {posting.selectedTags?.length > 0
+                                                    ? posting.selectedTags.map((tag) => (
+                                                        <Button style={{ marginRight: '1em' }} key={tag} variant="success" disabled>
+                                                            {tag}
+                                                        </Button>
+                                                    ))
+                                                    : "No tags"}{" "}
+                                            </div>
+                                            <strong>Location:</strong> {posting.location} <br />
+                                            <strong>Address:</strong> {posting.address} <br />
+                                            <strong>Status:</strong> {posting.status} <br />
+                                            <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                                                <Card.Text style={{ marginBottom: '0.5em' }}><strong>Description:</strong></Card.Text>
+                                                <ReactQuill
+                                                    value={posting.jobDescription}
+                                                    readOnly
+                                                    theme="snow"
+                                                    modules={{ toolbar: false }}
+                                                />
+                                            </div>
+                                            Date Published: {handleDate(posting.datePublished)}
+                                        </Card.Text>
+                                    </Card.Body>
+                                </Card>
+                            ) : null
+                        ))
                 ) : (
                     <Card.Text>No postings found</Card.Text>
-                )
-                }
+                )}
             </Card.Body>
         </Card>
     )

@@ -12,7 +12,9 @@ function NavBar() {
             <Card>
                 <Card.Header>
                     <Button onClick={() => {navigate('/home')}}>Home</Button>
-                    <Button onClick={() => {navigate('/profile')}}>Profile</Button>
+                    { role !== "admin" && 
+                        <Button onClick={() => {navigate('/profile')}}>Profile</Button>
+                    }
                     <Button onClick={() => {navigate('/postings')}}>Postings</Button>
                     { role === "employer" && (
                         <>

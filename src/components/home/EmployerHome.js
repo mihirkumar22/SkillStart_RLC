@@ -3,12 +3,14 @@ import { Card, Button, Modal, Form } from 'react-bootstrap';
 import ReactQuill from 'react-quill';
 import "react-quill/dist/quill.snow.css";
 import { db } from "../../firebase";
-import { collection, addDoc, doc, getDoc } from 'firebase/firestore';
+import { collection, addDoc } from 'firebase/firestore';
 
 function EmployerHome({ user }) {
+    const { userData, uid } = user;
+    
     const [show, setShow] = useState(false);
     const [formData, setFormData] = useState({
-        uid: user.uid,
+        uid: uid,
         title: "",
         companyName: "",
         location: "",
@@ -21,15 +23,12 @@ function EmployerHome({ user }) {
     const handleShow = () => setShow(true);
 
     const handleAutoFill = async () => {
-        const userRef = doc(db, 'users', user.uid);
-        const userDoc = await getDoc(userRef);
-        const userData = userDoc.data();
-        setFormData((prev) => ({ 
+        setFormData((prev) => ({
             ...prev,
             companyName: userData.companyName || "",
             location: userData.location || "",
             address: userData.address || ""
-         }))
+        }))
     }
 
     const handleChange = (e) => {
@@ -52,13 +51,13 @@ function EmployerHome({ user }) {
                 applicants: []
             })
 
-            setFormData({ 
-                uid: user.uid, 
-                title: "", 
-                companyName: "", 
-                location: "", 
-                address: "", 
-                jobDescription: "", 
+            setFormData({
+                uid: uid,
+                title: "",
+                companyName: "",
+                location: "",
+                address: "",
+                jobDescription: "",
                 selectedTags: []
             });
 
@@ -72,98 +71,106 @@ function EmployerHome({ user }) {
 
     const handleTagChange = async (tag) => {
         const prevSelectedTags = formData.selectedTags;
-        setFormData((prev) =>  {
+        setFormData((prev) => {
             if (prevSelectedTags.includes(tag)) {
-                return { ...prev, selectedTags: prevSelectedTags.filter(t => t != tag)}; 
+                return { ...prev, selectedTags: prevSelectedTags.filter(t => t !== tag) };
             } else {
-                return { ...prev, selectedTags: [ ...prevSelectedTags, tag ]};
+                return { ...prev, selectedTags: [...prevSelectedTags, tag] };
             }
         })
     }
 
     return (
-        <Card>
-            <Card.Body>
-                <Card.Title>Home Page</Card.Title>
-                <Card.Text>Hello, {user.email}! You are an employer.</Card.Text>
-                <Button onClick={handleShow}>+ Make a new posting</Button>
+        <div style={{ height: '75vh' }}>
+            <Card className='h-100'>
+                <Card.Body className="d-flex flex-column align-items-center">
+                    <Card.Title className='text-center'>Home Page</Card.Title>
+                    <Card.Text className='text-center' style={{ marginTop: '3em', fontSize: '2em' }}>Welcome, {userData.companyName}!</Card.Text>
+                    <Button style={{ minWidth: '200px', width: '40vh', marginTop: '5vh' }} variant="success" onClick={handleShow}>+ Make a new posting</Button>
 
-                <Modal show={show} onHide={handleClose}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Make a new posting</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <Form onSubmit={handleSubmit}>
-                            <Form.Group controlId="jobOverview">
-                                <Form.Label>Job Overview</Form.Label>
-                                <Form.Control
-                                    name="title"
-                                    value={formData.title}
-                                    type="text"
-                                    placeholder="Job Title"
-                                    maxLength={50}
-                                    onChange={handleChange}
-                                    required
-                                />
-                                <Form.Control
-                                    name="companyName"
-                                    value={formData.companyName}
-                                    type="text"
-                                    placeholder="Company Name"
-                                    maxLength={50}
-                                    onChange={handleChange}
-                                    required
-                                />
-                                <Form.Control
-                                    name="location"
-                                    value={formData.location}
-                                    type="text"
-                                    placeholder="Location"
-                                    maxLength={50}
-                                    onChange={handleChange}
-                                    required
-                                />
-                                <Form.Control
-                                    name="address"
-                                    value={formData.address}
-                                    type="text"
-                                    placeholder="Address"
-                                    maxLength={50}
-                                    onChange={handleChange}
-                                    required
-                                />
-                                <Button onClick={handleAutoFill}>Replace with defaults?</Button>
-                            </Form.Group>
-                            <Form.Group controlId="jobDescription">
-                                <Form.Label>Job Description</Form.Label>
-                                <div style={{ minHeight: "30vh", maxHeight: "30vh", overflowY: "auto" }}>
-                                    <ReactQuill
-                                        theme="snow"
-                                        value={formData.jobDescription}
-                                        placeholder="Enter detailed job description"
-                                        onChange={handleDescriptionChange}
+                    <Modal show={show} onHide={handleClose}>
+                        <Modal.Header closeButton>
+                            <Modal.Title>Make a new posting</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <Form onSubmit={handleSubmit}>
+                                <Form.Group controlId="jobOverview">
+                                    <Form.Label className="w-100 text-center" style={{ fontSize: '1.3em' }}>Job Overview</Form.Label>
+                                    <Form.Control
+                                        name="title"
+                                        value={formData.title}
+                                        type="text"
+                                        placeholder="Job Title"
+                                        maxLength={50}
+                                        onChange={handleChange}
+                                        style={{ marginBottom: '1em' }}
+                                        required
                                     />
-                                </div>
-                            </Form.Group>
-                            <Form.Group controlId="tags">
-                                <Form.Label>Tags</Form.Label>
-                                {tags.map((tag) => (
-                                    <Button
-                                        key={tag}
-                                        type="checkbox"
-                                        variant={formData.selectedTags.includes(tag) ? "primary" : "secondary"}
-                                        onClick={() => handleTagChange(tag)}
-                                    >
-                                        {tag}
-                                    </Button>
-                                ))}
-                            </Form.Group>
-                            <Button variant="primary" type="submit">Submit Job</Button>
-                        </Form>
-                    </Modal.Body>
-                </Modal>
-            </Card.Body>
-        </Card>
+                                    <Form.Control
+                                        name="companyName"
+                                        value={formData.companyName}
+                                        type="text"
+                                        placeholder="Company Name"
+                                        maxLength={50}
+                                        onChange={handleChange}
+                                        style={{ marginBottom: '1em' }}
+                                        required
+                                    />
+                                    <Form.Control
+                                        name="location"
+                                        value={formData.location}
+                                        type="text"
+                                        placeholder="Location"
+                                        maxLength={50}
+                                        onChange={handleChange}
+                                        style={{ marginBottom: '1em' }}
+                                        required
+                                    />
+                                    <Form.Control
+                                        name="address"
+                                        value={formData.address}
+                                        type="text"
+                                        placeholder="Address"
+                                        maxLength={50}
+                                        onChange={handleChange}
+                                        style={{ marginBottom: '1em' }}
+                                        required
+                                    />
+                                    <div style={{ width: '100%', display: 'flex', justifyContent: 'left', marginBottom: '0.5em' }}>
+                                        <Button variant="success" onClick={() => handleAutoFill()}>Autofill</Button>
+                                    </div>
+                                </Form.Group>
+                                <Form.Group controlId="jobDescription">
+                                    <Form.Label className="w-100 text-center" style={{ fontSize: '1.3em', marginBottom: '1em' }}>Job Description</Form.Label>
+                                    <div style={{ minHeight: "30vh", maxHeight: "30vh", overflowY: "auto", marginBottom: '1em' }}>
+                                        <ReactQuill
+                                            theme="snow"
+                                            value={formData.jobDescription}
+                                            placeholder="Enter detailed job description"
+                                            onChange={handleDescriptionChange}
+                                        />
+                                    </div>
+                                </Form.Group>
+                                <Form.Group className='d-flex flex-wrap mb-2' style={{ justifyContent: 'space-around'}} controlId="tags">
+                                    <Form.Label className='w-100 text-center' style={{ fontSize: '1.2rem'}}>Select tags</Form.Label>
+                                    {tags.map((tag) => (
+                                        <Button
+                                            key={tag}
+                                            type="button"
+                                            variant={formData.selectedTags.includes(tag) ? "success" : "secondary"}
+                                            onClick={() => handleTagChange(tag)}
+                                        >
+                                            {tag}
+                                        </Button>
+                                    ))}
+                                </Form.Group>
+                                <Button variant="success" type="submit">Submit Job</Button>
+                            </Form>
+                        </Modal.Body>
+                    </Modal>
+                </Card.Body>
+            </Card>
+        </div>
     )
 }
 

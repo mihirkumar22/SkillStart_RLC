@@ -1,14 +1,16 @@
 import React from "react";
-import NavBar from "../navbar";
 import { Card } from "react-bootstrap";
 
 function StudentHome({ user }) {
     return (
-        <Card>
-            <Card.Body>
-                <Card.Title>Home Page</Card.Title>
-            </Card.Body>
-        </Card>
+        <div style={{ height: '75vh'}}>
+            <Card className="h-100">
+                <Card.Body className="d-flex flex-column">
+                    <Card.Title className="text-center">Home Page</Card.Title>
+                    <Card.Text className="text-center" style={{ marginTop: '4em', fontSize: '2em' }}>Welcome, {user.username || user.email}!</Card.Text>
+                </Card.Body>
+            </Card>
+        </div>
     )
 }
 
