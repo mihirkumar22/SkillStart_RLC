@@ -7,6 +7,8 @@ import { useUserRole } from '../../contexts/UserContext';
 import ReactQuill from "react-quill";
 import { format } from "date-fns"
 import { useAuth } from '../../contexts/AuthContext';
+import { FaTrash } from 'react-icons/fa';
+import background from '../images/tree-bg.png'
 
 function Postings() {
     const [loading, setLoading] = useState(false);
@@ -144,101 +146,101 @@ function Postings() {
     }, [tagsEnabled]);
 
     return (
-        <Card>
-            <Card.Body className='d-flex align-items-center flex-column'>
-                <Card.Header className='w-100'>
-                    <NavBar role={role} />
-                </Card.Header>
-                <Card.Title style={{ marginTop: '0.1em', fontSize: '2em' }}>Job Postings</Card.Title>
-                <div style={{ display: 'flex', flexDirection: 'row', marginBottom: '1em' }}>
-                    {tags.map((tag) => (
-                        <Button
-                            key={tag}
-                            variant={tagsEnabled.includes(tag) ? "success" : "secondary"}
-                            onClick={() => { toggleTag(tag) }}
-                            style={{ marginLeft: '0.5em', marginRight: '0.5em' }}
-                        >
-                            {tag}
-                        </Button>
-                    ))}
-                </div>
-                {role === "admin" && (
-                    <>
-                        <div style={{ display: 'flex', flexDirection: 'row', marginBottom: '1em' }}>
-                            <Button style={{ marginLeft: '0.5em', marginRight: '0.5em' }} onClick={() => toggleVisibility('approved')}>{hideApproved ? "Show Approved Posts" : "Hide Approved Posts"}</Button>
-                            <Button style={{ marginLeft: '0.5em', marginRight: '0.5em' }} onClick={() => toggleVisibility('unapproved')}>{hideUnapproved ? "Show Unapproved Posts" : "Hide Unapproved Posts"}</Button>
-                        </div>
-                    </>
-                )}
-                {loading ? (
-                    <Card.Text>Loading...</Card.Text>
-                ) : postings.length > 0 ? (
-                    postings
-                        .filter((posting) => posting.isVisible !== false) // Only show visible postings
-                        .map((posting) => (
-                            (posting.status === "approved" && !hideApproved) ||
-                                (posting.status === "unapproved" && !hideUnapproved) ? (
-                                <Card style={{ borderWidth: '2px', width: '50vw', marginBottom: '2em' }} key={posting.id}>
-                                    <Card.Body>
-                                        <Card.Header className="d-flex align-items-center justify-content-space-between">
-                                            {role !== 'admin' || role !==  'student' &&
-                                                <Card.Title className='w-100 text-center'><strong>{posting.title}</strong></Card.Title>
-                                            }
-                                            {role === "student" && (
-                                                <>
-                                                    <Card.Title style={{ flex: 1, textAlign: 'center'}} className='w-100 text-center'><strong>{posting.title}</strong></Card.Title>
-                                                    <Button
-                                                        disabled={applyLoading}
-                                                        onClick={() => handleApply(posting)}
-                                                    >
-                                                        {applyLoading ? "Loading..." : posting.applicants.includes(user.uid) ? "Unapply" : "Apply"}
-                                                    </Button>
-                                                </>
-                                            )}
-                                            {role === "admin" && (
-                                                <>
-                                                    <Button style={{ margin: '0', width: '250px' }} onClick={() => handleDelete(posting.id)} variant="danger">Remove Posting</Button>
-                                                    <Card.Title className='w-100 text-center'><strong>{posting.title}</strong></Card.Title>
-                                                    <Button onClick={() => handleApprove(posting)}>{posting.status === "approved" ? "Unapprove" : "Approve"}</Button>
-                                                </>
-                                            )}
-                                        </Card.Header>
-                                        <Card.Text>
-                                            <div style={{ width: '100%', display: 'flex', flexDirection: 'row', marginBottom: '0.5em', marginTop: '1em' }}>
-                                                {posting.selectedTags?.length > 0
-                                                    ? posting.selectedTags.map((tag) => (
-                                                        <Button style={{ marginRight: '1em' }} key={tag} variant="success" disabled>
-                                                            {tag}
+        <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+            <NavBar role={role} />
+            <Card style={{ flex: 1, border: 'none' }}>
+                <Card.Body className='d-flex align-items-center flex-column' style={{ backgroundImage: `url(${background})`, backgroundSize: 'cover' }}>
+                    <Card.Title style={{ marginTop: '0.1em', fontSize: '2em', color: 'white' }}>Job Postings</Card.Title>
+                    <div style={{ display: 'flex', flexDirection: 'row', marginBottom: '1em' }}>
+                        {tags.map((tag) => (
+                            <Button
+                                key={tag}
+                                variant={tagsEnabled.includes(tag) ? "success" : "secondary"}
+                                onClick={() => { toggleTag(tag) }}
+                                style={{ marginLeft: '0.5em', marginRight: '0.5em' }}
+                            >
+                                {tag}
+                            </Button>
+                        ))}
+                    </div>
+                    {role === "admin" && (
+                        <>
+                            <div style={{ display: 'flex', flexDirection: 'row', marginBottom: '1em' }}>
+                                <Button style={{ marginLeft: '0.5em', marginRight: '0.5em' }} onClick={() => toggleVisibility('approved')}>{hideApproved ? "Show Approved Posts" : "Hide Approved Posts"}</Button>
+                                <Button style={{ marginLeft: '0.5em', marginRight: '0.5em' }} onClick={() => toggleVisibility('unapproved')}>{hideUnapproved ? "Show Unapproved Posts" : "Hide Unapproved Posts"}</Button>
+                            </div>
+                        </>
+                    )}
+                    {loading ? (
+                        <Card.Text>Loading...</Card.Text>
+                    ) : postings.length > 0 ? (
+                        postings
+                            .filter((posting) => posting.isVisible !== false) // Only show visible postings
+                            .map((posting) => (
+                                (posting.status === "approved" && !hideApproved) ||
+                                    (posting.status === "unapproved" && !hideUnapproved) ? (
+                                    <Card style={{ borderWidth: '2px', width: '50vw', marginBottom: '2em' }} key={posting.id}>
+                                        <Card.Body>
+                                            <Card.Header className="d-flex align-items-center position-relative">
+                                                {role !== 'admin' && role !== 'student' &&
+                                                    <Card.Title><strong>{posting.title}</strong></Card.Title>
+                                                }
+                                                {role === "student" && (
+                                                    <>
+                                                        <Card.Title style={{ flex: 1 }} ><strong>{posting.title}</strong></Card.Title>
+                                                        <Button
+                                                            disabled={applyLoading}
+                                                            onClick={() => handleApply(posting)}
+                                                        >
+                                                            {applyLoading ? "Loading..." : posting.applicants.includes(user.uid) ? "Unapply" : "Apply"}
                                                         </Button>
-                                                    ))
-                                                    : "No tags"}{" "}
-                                            </div>
-                                            <div>
-                                                <strong>Location:</strong> {posting.location} <br />
-                                                <strong>Address:</strong> {posting.address} <br />
-                                            </div>
-                                            {role === "admin" && <><strong>Status:</strong> {posting.status} <br /></>}
-                                            <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
-                                                <Card.Text style={{ marginBottom: '0.5em' }}><strong>Job Description:</strong></Card.Text>
-                                                <ReactQuill
-                                                    value={posting.jobDescription}
-                                                    readOnly
-                                                    theme="snow"
-                                                    modules={{ toolbar: false }}
-                                                    style={{ marginBottom: '0.5em' }}
-                                                />
-                                            </div>
-                                            Date Published: {handleDate(posting.datePublished)}
-                                        </Card.Text>
-                                    </Card.Body>
-                                </Card>
-                            ) : null
-                        ))
-                ) : (
-                    <Card.Text>No postings found</Card.Text>
-                )}
-            </Card.Body>
-        </Card>
+                                                    </>
+                                                )}
+                                                {role === "admin" && (
+                                                    <>
+                                                        <Card.Title style={{ flex: 1 }}><strong>{posting.title}</strong></Card.Title>
+                                                        <Button style={{ marginRight: 4 }} onClick={() => handleApprove(posting)}>{posting.status === "approved" ? "Unapprove" : "Approve"}</Button>
+                                                        <Button style={{ margin: '0' }} onClick={() => handleDelete(posting.id)} variant="danger"><FaTrash /></Button>
+                                                    </>
+                                                )}
+                                            </Card.Header>
+                                            <Card.Text>
+                                                <div style={{ width: '100%', display: 'flex', flexDirection: 'row', marginBottom: '0.5em', marginTop: '1em' }}>
+                                                    {posting.selectedTags?.length > 0
+                                                        ? posting.selectedTags.map((tag) => (
+                                                            <Button style={{ marginRight: '1em' }} key={tag} variant="success" disabled>
+                                                                {tag}
+                                                            </Button>
+                                                        ))
+                                                        : "No tags"}{" "}
+                                                </div>
+                                                <div>
+                                                    <strong>Location:</strong> {posting.location} <br />
+                                                    <strong>Address:</strong> {posting.address} <br />
+                                                </div>
+                                                {role === "admin" && <><strong>Status:</strong> {posting.status} <br /></>}
+                                                <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                                                    <Card.Text style={{ marginBottom: '0.5em' }}><strong>Job Description:</strong></Card.Text>
+                                                    <ReactQuill
+                                                        value={posting.jobDescription}
+                                                        readOnly
+                                                        theme="snow"
+                                                        modules={{ toolbar: false }}
+                                                        style={{ marginBottom: '0.5em' }}
+                                                    />
+                                                </div>
+                                                Date Published: {handleDate(posting.datePublished)}
+                                            </Card.Text>
+                                        </Card.Body>
+                                    </Card>
+                                ) : null
+                            ))
+                    ) : (
+                        <Card.Text>No postings found</Card.Text>
+                    )}
+                </Card.Body>
+            </Card>
+        </div>
     )
 }
 

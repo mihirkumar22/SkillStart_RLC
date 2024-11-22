@@ -3,35 +3,16 @@ import NavBar from '../navbar';
 import { Card, Button } from 'react-bootstrap';
 import { useAuth } from '../../contexts/AuthContext';
 import { db } from '../../firebase';
-import { collection, query, where, getDocs, deleteDoc, doc } from 'firebase/firestore';
+import { collection, query, where, getDocs } from 'firebase/firestore';
 import ReactQuill from 'react-quill';
 import { format } from 'date-fns';
-import { useNavigate } from 'react-router-dom';
 import background from '../images/tree-bg.png';
 
-function EmployerPostings() {
+function StudentPostings() {
     const { user } = useAuth();
     const [postings, setPostings] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [hideApproved, setHideApproved] = useState(false);
-    const [hideUnapproved, setHideUnapproved] = useState(false);
     const [tagsEnabled, setTagsEnabled] = useState([]);
-
-    const navigate = useNavigate();
-
-    const handleDelete = async (id) => {
-        const confirmDelete = window.confirm("Are you sure you want to delete this posting?");
-        if (!confirmDelete) {
-            return;
-        }
-
-        try {
-            await deleteDoc(doc(db, 'postings', id));
-            setPostings((prev) => prev.filter((posting) => posting.id !== id))
-        } catch (err) {
-            console.error("error deleting posting", err)
-        }
-    }
 
     useEffect(() => {
         if (!user) {
@@ -42,7 +23,7 @@ function EmployerPostings() {
             setLoading(true);
             try {
                 const postingsRef = collection(db, 'postings');
-                const q = query(postingsRef, where('uid', "==", user.uid));
+                const q = query(postingsRef, where('applicants', "array-contains", user.uid));
                 const querySnapshot = await getDocs(q);
 
                 const userPostings = querySnapshot.docs.map((doc) => ({
@@ -66,19 +47,6 @@ function EmployerPostings() {
             return format(date, "EEE, MMM dd, yyyy")
         }
         return "Date not available"
-    }
-
-    const handleViewApplicants = (posting) => {
-        navigate("/employer-postings/applicants", { state: { posting } });
-    }
-
-    const toggleVisibility = (type) => {
-        if (type === "approved") {
-            setHideApproved((prevState) => !prevState);
-        }
-        if (type === "unapproved") {
-            setHideUnapproved((prevState) => !prevState);
-        }
     }
 
     const tags = ["tag 1", "tag 2", "tag 3", "tag 4", "tag 5"]
@@ -120,24 +88,17 @@ function EmployerPostings() {
                             </Button>
                         ))}
                     </div>
-                    <div style={{ display: 'flex', flexDirection: 'row', marginBottom: '1em' }}>
-                        <Button style={{ marginLeft: '0.5em', marginRight: '0.5em' }} onClick={() => toggleVisibility('approved')}>{hideApproved ? "Show Approved Posts" : "Hide Approved Posts"}</Button>
-                        <Button style={{ marginLeft: '0.5em', marginRight: '0.5em' }} onClick={() => toggleVisibility('unapproved')}>{hideUnapproved ? "Show Unapproved Posts" : "Hide Unapproved Posts"}</Button>
-                    </div>
                     {loading ? (
                         <Card.Text>Loading postings...</Card.Text>
                     ) : postings.length > 0 ? (
                         postings
                             .filter((posting) => posting.isVisible !== false)
                             .map((posting) => (
-                                (posting.status === "approved" && !hideApproved) ||
-                                    (posting.status === "unapproved" && !hideUnapproved) ? (
+                                (
                                     <Card style={{ borderWidth: '2px', width: '50vw', marginBottom: '2em' }} key={posting.id}>
                                         <Card.Body>
                                             <Card.Header className="d-flex align-items-center">
-                                                <Button style={{ width: '250px' }} variant="danger" onClick={() => { handleDelete(posting.id) }}>Remove Posting</Button>
                                                 <Card.Title className='w-100 text-center'><strong>{posting.title}</strong></Card.Title>
-                                                <Button variant="success" style={{ width: '250px' }} onClick={() => { handleViewApplicants(posting) }}>View Applicants</Button>
                                             </Card.Header>
                                             <Card.Text>
                                                 <div style={{ width: '100%', display: 'flex', flexDirection: 'row', marginBottom: '0.5em', marginTop: '1em' }}>
@@ -165,10 +126,10 @@ function EmployerPostings() {
                                             </Card.Text>
                                         </Card.Body>
                                     </Card>
-                                ) : null
+                                )
                             ))
                     ) : (
-                        <Card.Text style={{ color: 'white' }}>No postings found</Card.Text>
+                        <Card.Text style={{color: 'white'}}>No postings found</Card.Text>
                     )}
                 </Card.Body>
             </Card>
@@ -176,4 +137,4 @@ function EmployerPostings() {
     )
 }
 
-export default EmployerPostings;
+export default StudentPostings;

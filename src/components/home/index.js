@@ -9,12 +9,12 @@ import StudentHome from "./StudentHome";
 import AdminHome from "./AdminHome";
 import { db } from '../../firebase';
 import { doc, getDoc } from 'firebase/firestore';
+import background from '../images/tree-bg.png'
 
 function Home() {
-    const [loading, setLoading] = useState(false);
     const [userData, setUserData] = useState(null);
 
-    const { user, logout } = useAuth();
+    const { user } = useAuth();
     const { role } = useUserRole();
     const navigate = useNavigate();
 
@@ -25,63 +25,50 @@ function Home() {
             setUserData(userDocSnap.data());
         }
         fetchUserData();
-    }, [user])
-
-
-    async function handleLogout(e) {
-        e.preventDefault();
-
-        setLoading(true);
-
-        await logout();
-        navigate('/login')
-
-        setLoading(false);
-    }
+    }, [user, navigate])
 
     if (!user || !userData) {
         // Show loading message or placeholder until userData is fetched
         return (
-            <Card className="w-100 vh-100">
-                <Card.Header>
-                    <NavBar role={role} />
-                </Card.Header>
-                <Card.Body>
-                    <Card.Text>Loading user data...</Card.Text>
-                </Card.Body>
-            </Card>
+            <div>
+                <NavBar role={role} />
+                <Card style={{ border: 'none' }} className="w-100 vh-100">
+                    <Card.Body style={{ backgroundImage: `url(${background})`, backgroundSize: 'cover' }}>
+                        <Card.Text style={{ color: 'white' }}>Loading user data...</Card.Text>
+                    </Card.Body>
+                </Card>
+            </div>
         );
     }
 
     return (
-        <Card className="w-100 vh-100">
-            <Card.Body>
-                <Card.Header>
-                    <NavBar role={role} />
-                </Card.Header>
-                <div>
-                    {user ? (
-                        <>
-                            {role === 'employer' && (
-                                <EmployerHome user={{ userData, uid: user.uid }} />
-                            )}
-                            {role === 'student' && (
-                                <StudentHome user={userData} />
-                            )}
-                            {role === 'admin' && (
-                                <AdminHome user={userData} />
-                            )}
-                            <Button disabled={loading} onClick={handleLogout}>{loading ? "Logging Out..." : "Log Out"}</Button>
-                        </>
-                    ) : (
-                        <>
-                            <Card.Text>Please login to view the home page.</Card.Text>
-                            <Button onClick={() => { navigate('/login') }}>Return</Button>
-                        </>
-                    )}
-                </div>
-            </Card.Body>
-        </Card>
+        <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+            <NavBar role={role} />
+            <Card style={{ flex: 1, border: 'none' }}>
+                <Card.Body style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', backgroundImage: `url(${background})`, backgroundSize: 'cover' }}>
+                    <div>
+                        {user ? (
+                            <>
+                                {role === 'employer' && (
+                                    <EmployerHome user={{ userData, uid: user.uid, email: user.email }} />
+                                )}
+                                {role === 'student' && (
+                                    <StudentHome user={{ userData, email: user.email }} />
+                                )}
+                                {role === 'admin' && (
+                                    <AdminHome user={userData} />
+                                )}
+                            </>
+                        ) : (
+                            <>
+                                <Card.Text>Please login to view the home page.</Card.Text>
+                                <Button onClick={() => { navigate('/login') }}>Return</Button>
+                            </>
+                        )}
+                    </div>
+                </Card.Body>
+            </Card>
+        </div>
     )
 }
 

@@ -1,13 +1,18 @@
 import React from "react";
-import { Card } from "react-bootstrap";
+import { Card, Button } from "react-bootstrap";
+import { useNavigate } from 'react-router-dom';
 
 function StudentHome({ user }) {
+    const { userData, email } = user;
+
+    const navigate = useNavigate();
+
     return (
         <div style={{ height: '75vh'}}>
-            <Card className="h-100">
-                <Card.Body className="d-flex flex-column">
-                    <Card.Title className="text-center">Home Page</Card.Title>
-                    <Card.Text className="text-center" style={{ marginTop: '4em', fontSize: '2em' }}>Welcome, {user.username || user.email}!</Card.Text>
+            <Card style={{ background: 'none' }}>
+                <Card.Body className="d-flex flex-column align-items-center">
+                    <Card.Text className='text-center' style={{ marginTop: '3em', fontSize: '2em', color: 'white' }}>Welcome, {userData.companyName ? userData.companyName : email}!</Card.Text>
+                    <Button style={{ minWidth: '200px', width: '40vh', marginTop: '5vh' }} variant="success" onClick={() => {navigate('/student-applications')}}>View my applications</Button>
                 </Card.Body>
             </Card>
         </div>

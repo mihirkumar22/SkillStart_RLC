@@ -4,9 +4,10 @@ import ReactQuill from 'react-quill';
 import "react-quill/dist/quill.snow.css";
 import { db } from "../../firebase";
 import { collection, addDoc } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
 
 function EmployerHome({ user }) {
-    const { userData, uid } = user;
+    const { userData, uid, email } = user;
     
     const [show, setShow] = useState(false);
     const [formData, setFormData] = useState({
@@ -18,6 +19,8 @@ function EmployerHome({ user }) {
         jobDescription: "",
         selectedTags: []
     });
+
+    const navigate = useNavigate();
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -82,11 +85,12 @@ function EmployerHome({ user }) {
 
     return (
         <div style={{ height: '75vh' }}>
-            <Card className='h-100'>
+            <Card style={{ background: 'none' }}>
                 <Card.Body className="d-flex flex-column align-items-center">
-                    <Card.Title className='text-center'>Home Page</Card.Title>
-                    <Card.Text className='text-center' style={{ marginTop: '3em', fontSize: '2em' }}>Welcome, {userData.companyName}!</Card.Text>
+                    <Card.Text className='text-center' style={{ marginTop: '3em', fontSize: '2em', color: 'white' }}>Welcome, {userData.companyName ? userData.companyName : email}!</Card.Text>
                     <Button style={{ minWidth: '200px', width: '40vh', marginTop: '5vh' }} variant="success" onClick={handleShow}>+ Make a new posting</Button>
+                    <Button style={{ minWidth: '200px', width: '40vh', marginTop: '5vh' }} variant="success" onClick={() => {navigate('/employer-postings')}}>View your postings</Button>
+                    <Button style={{ minWidth: '200px', width: '40vh', marginTop: '5vh' }} variant="success" onClick={() => {navigate('/saved-students')}}>View bookmarked students</Button>
 
                     <Modal show={show} onHide={handleClose}>
                         <Modal.Header closeButton>

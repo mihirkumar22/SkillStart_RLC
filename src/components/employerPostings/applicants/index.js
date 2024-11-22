@@ -5,6 +5,7 @@ import { useLocation, Link } from 'react-router-dom';
 import { format } from 'date-fns'
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../../firebase';
+import background from '../../images/tree-bg.png'
 
 function Applicants() {
     const location = useLocation();
@@ -45,33 +46,41 @@ function Applicants() {
     }, [posting])
 
     return (
-        <Card>
-            <Card.Body>
-                <Card.Header>
-                    <NavBar role="employer" />
-                </Card.Header>
-                <Card.Title>Applicants for: {posting.title}</Card.Title>
-                <Card.Text>Location: {posting.location}</Card.Text>
-                <Card.Text>Address: {posting.address}</Card.Text>
-                <Card.Text>Status: {posting.location}</Card.Text>
-                <Card.Text>Date Published: {handleDate(posting.datePublished)}</Card.Text>
-                <Card.Text>
-                    Applicants: <br />
-                    {applicantsData.length > 0 ? (
-                        applicantsData.map((applicant, index) => 
-                        <Card.Text key={index}>
-                            <Link
-                                to={`/view-profile/${applicant.id}`}
-                            >
-                                {applicant.username}
-                            </Link>
-                        </Card.Text>)
-                    ) : (
-                        <Card.Text>No applicants found</Card.Text>
-                    )}
-                </Card.Text>
-            </Card.Body>
-        </Card>
+        <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+            <NavBar role="employer" />
+            <Card style={{ flex: 1, border: 'none' }}>
+                <Card.Body className='d-flex align-items-center flex-column' style={{ backgroundImage: `url(${background})`, backgroundSize: 'cover' }}>
+                    <Card style={{ height: '70vh', width: '40vw', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                        <Card.Text style={{ margin: '.3em',fontSize: '2em', textAlign: 'center', width: '100%', marginBottom: '0px', alignContent: 'left'}}>
+                            <strong>Applicants for: {posting.title}</strong>
+                        </Card.Text>
+                        <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column'}}>
+                            <p><strong>Location:</strong> {posting.location}</p> <br />
+                            <p><strong>Address:</strong> {posting.address}</p> <br />
+                            <p><strong>Status:</strong> {posting.location}</p> <br />
+                            <p><strong>Date Published:</strong> {handleDate(posting.datePublished)}</p> <br />
+                        </div>
+                        <Card.Text>
+                            <strong>Applicants:</strong> <br />
+                            <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column'}}>
+                            {applicantsData.length > 0 ? (
+                                applicantsData.map((applicant, index) =>
+                                    <Card.Text key={index}>
+                                        <Link
+                                            to={`/view-profile/${applicant.id}`}
+                                        >
+                                            {applicant.username}
+                                        </Link>
+                                    </Card.Text>)
+                            ) : (
+                                <Card.Text>No applicants found</Card.Text>
+                            )}
+                            </div>
+                        </Card.Text>
+                    </Card>
+                </Card.Body>
+            </Card>
+        </div>
     )
 }
 

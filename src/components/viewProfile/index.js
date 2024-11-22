@@ -6,13 +6,14 @@ import { doc, getDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firest
 import { db } from '../../firebase';
 import { useUserRole } from '../../contexts/UserContext';
 import { useAuth } from '../../contexts/AuthContext';
+import background from '../images/tree-bg.png'
 
 function ViewProfile() {
     const { userId } = useParams();
-    const [ loading, setLoading ] = useState(false);
-    const [ applicant, setApplicant ] = useState(null);
-    const [ savedStudents, setSavedStudents ] = useState(null);
-    const [ saveStudentLoading, setSaveStudentLoading ] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [applicant, setApplicant] = useState(null);
+    const [savedStudents, setSavedStudents] = useState(null);
+    const [saveStudentLoading, setSaveStudentLoading] = useState(false);
 
     const { user } = useAuth();
     const { role } = useUserRole();
@@ -37,13 +38,13 @@ function ViewProfile() {
         const fetchSavedStudents = async () => {
             if (role === "employer") {
                 setSaveStudentLoading(true);
-            
-            const docRef = doc(db, 'users', user.uid);
-            const docSnap = await getDoc(docRef);
-            setSavedStudents(docSnap.data().savedStudents);
-            
-            setSaveStudentLoading(false);
-            }    
+
+                const docRef = doc(db, 'users', user.uid);
+                const docSnap = await getDoc(docRef);
+                setSavedStudents(docSnap.data().savedStudents);
+
+                setSaveStudentLoading(false);
+            }
         }
 
         fetchSavedStudents();
@@ -54,16 +55,16 @@ function ViewProfile() {
 
         const employerDocRef = doc(db, 'users', user.uid);
         const employerDocSnap = await getDoc(employerDocRef);
-        
+
         if (employerDocSnap.data().savedStudents.includes(studentId)) {
-            updateDoc(employerDocRef, {savedStudents: arrayRemove(studentId)})
+            updateDoc(employerDocRef, { savedStudents: arrayRemove(studentId) })
         } else {
-            updateDoc(employerDocRef, {savedStudents: arrayUnion(studentId)})
+            updateDoc(employerDocRef, { savedStudents: arrayUnion(studentId) })
         }
-        setSavedStudents((prev) => 
+        setSavedStudents((prev) =>
             prev.includes(studentId)
-            ? prev.filter((id) => id !== studentId)
-            : [ ...prev, studentId ]
+                ? prev.filter((id) => id !== studentId)
+                : [...prev, studentId]
         )
 
         setSaveStudentLoading(false);
@@ -79,18 +80,24 @@ function ViewProfile() {
     }
 
     return (
-        <Card>
-            <Card.Body>
-                <Card.Header>
-                    <NavBar />
-                </Card.Header>
-                <Card.Title>{applicant.username} Profile</Card.Title>
-                <Card.Text>Email Address: {applicant.email}</Card.Text>
-                <Card.Text>Location: {applicant.location}</Card.Text>
-                <Card.Text>Phone Number: {applicant.phoneNumber}</Card.Text>
-            </Card.Body>
-            { role === "employer" && <Button onClick={() => {handleSaveStudent(userId)}}>{saveStudentLoading ? "Loading..." : savedStudents.includes(userId) ? "Unsave student" : "Save Student"}</Button>}
-        </Card>
+        <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+            <NavBar />
+            <Card style={{ flex: 1, border: 'none' }}>
+                <Card.Body style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', backgroundImage: `url(${background})`, backgroundSize: 'cover' }}>
+                    <Card style={{ width: '40vw' }}>
+                        <Card.Body style={{ display: 'flex', flexDirection: 'column' }}>
+                            <Card.Text style={{ fontSize: '2em', textAlign: 'center', width: '100%', marginBottom: '0px' }}>
+                                {applicant.username} Profile
+                            </Card.Text>
+                            <Card.Text><strong>Email Address:</strong> {applicant.email}</Card.Text>
+                            <Card.Text><strong>Location:</strong> {applicant.location}</Card.Text>
+                            <Card.Text><strong>Phone Number:</strong> {applicant.phoneNumber}</Card.Text>
+                            {role === "employer" && <Button onClick={() => { handleSaveStudent(userId) }}>{saveStudentLoading ? "Loading..." : savedStudents.includes(userId) ? "Remove Bookmark" : "Bookmark"}</Button>}
+                        </Card.Body>
+                    </Card>
+                </Card.Body>
+            </Card>
+        </div>
     )
 }
 

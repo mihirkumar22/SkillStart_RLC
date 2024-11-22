@@ -13,6 +13,7 @@ import Applicants from './employerPostings/applicants';
 import ViewProfile from './viewProfile'
 import Postings from './postings';
 import SavedStudents from './savedStudents';
+import StudentPostings from './studentPostings';
 
 function App() {
     return (
@@ -22,6 +23,7 @@ function App() {
                     <Route path="/login" element={<Login />} />
                     <Route path="/home" element={<Home />} />
                     <Route path="/profile" element={<Profile />} />
+                    <Route path="/student-applications" element={<StudentPostings />} />
                     <Route path="/employer-postings" element={<EmployerPostings />} />
                     <Route path="/employer-postings/applicants" element={<Applicants />} />
                     <Route path="/postings" element={<Postings />} />

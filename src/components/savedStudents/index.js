@@ -5,6 +5,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { Link } from 'react-router-dom';
 import NavBar from '../navbar';
+import background from '../images/tree-bg.png';
 
 function SavedStudents() {
     const [savedStudentsIds, setSavedStudentsIds] = useState([]);
@@ -41,28 +42,36 @@ function SavedStudents() {
     }, [user.uid, user])
 
     return (
-        <Card>
-            <Card.Body>
-                <Card.Header>
-                    <NavBar />
-                </Card.Header>
-                <Card.Title>Saved students</Card.Title>
-                {loading
-                    ? <Card.Text>Loading...</Card.Text>
-                    : savedStudentsIds.length > 0 ? (
-                        savedStudentsIds.map((student, index) => (
-                            <Card.Text key={index}>
-                                <Link key={index} to={`/view-profile/${student}`}>
-                                    {savedStudentsNames[index] || "Unknown user"}
-                                </Link>
+        <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+            <NavBar />
+            <Card style={{ flex: 1, border: 'none' }}>
+                <Card.Body style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', backgroundImage: `url(${background})`, backgroundSize: 'cover' }}>
+                    <Card style={{ width: '40vw' }}>
+                        <Card.Body style={{ display: 'flex', flexDirection: 'column' }}>
+                            <Card.Text style={{ fontSize: '2em', textAlign: 'center', width: '100%', marginBottom: '0px' }}>
+                                Bookmarked Students:
                             </Card.Text>
-                        ))
-                    ) : (
-                        <Card.Text>No saved students found.</Card.Text>
-                    )
-                }
-            </Card.Body>
-        </Card>
+                        </Card.Body>
+                        <div style={{ display: 'flex', justifyContent: 'center' }}>
+                            {loading
+                                ? <Card.Text>Loading...</Card.Text>
+                                : savedStudentsIds.length > 0 ? (
+                                    savedStudentsIds.map((student, index) => (
+                                        <Card.Text style={{ marginBottom: '8px'}} key={index}>
+                                            <Link key={index} to={`/view-profile/${student}`}>
+                                                {savedStudentsNames[index] || "Unknown user"}
+                                            </Link>
+                                        </Card.Text>
+                                    ))
+                                ) : (
+                                    <Card.Text>No saved students found.</Card.Text>
+                                )
+                            }
+                        </div>
+                    </Card>
+                </Card.Body>
+            </Card>
+        </div>
     )
 }
 
