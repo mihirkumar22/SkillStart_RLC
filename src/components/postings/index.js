@@ -200,7 +200,7 @@ function Postings() {
                                                     <>
                                                         <Card.Title style={{ flex: 1 }}><strong>{posting.title}</strong></Card.Title>
                                                         <Button style={{ marginRight: 4 }} onClick={() => handleApprove(posting)}>{posting.status === "approved" ? "Unapprove" : "Approve"}</Button>
-                                                        <Button style={{ margin: '0' }} onClick={() => handleDelete(posting.id)} variant="danger"><FaTrash /></Button>
+                                                        <Button style={{ margin: 0 }} onClick={() => handleDelete(posting.id)} variant="danger"><FaTrash /></Button>
                                                     </>
                                                 )}
                                             </Card.Header>

@@ -8,6 +8,8 @@ import ReactQuill from 'react-quill';
 import { format } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import background from '../images/tree-bg.png';
+import { FaTrash } from 'react-icons/fa';
+
 
 function EmployerPostings() {
     const { user } = useAuth();
@@ -135,9 +137,9 @@ function EmployerPostings() {
                                     <Card style={{ borderWidth: '2px', width: '50vw', marginBottom: '2em' }} key={posting.id}>
                                         <Card.Body>
                                             <Card.Header className="d-flex align-items-center">
-                                                <Button style={{ width: '250px' }} variant="danger" onClick={() => { handleDelete(posting.id) }}>Remove Posting</Button>
-                                                <Card.Title className='w-100 text-center'><strong>{posting.title}</strong></Card.Title>
-                                                <Button variant="success" style={{ width: '250px' }} onClick={() => { handleViewApplicants(posting) }}>View Applicants</Button>
+                                                <Card.Title style={{ flex: 1 }}><strong>{posting.title}</strong></Card.Title>
+                                                <Button style={{ marginRight: 4 }} onClick={() => { handleViewApplicants(posting) }} varaint='success'>View Applicants</Button>
+                                                <Button style={{ marginRight: 0 }} onClick={() => { handleDelete(posting.id) }} variant='danger'><FaTrash /></Button>
                                             </Card.Header>
                                             <Card.Text>
                                                 <div style={{ width: '100%', display: 'flex', flexDirection: 'row', marginBottom: '0.5em', marginTop: '1em' }}>
