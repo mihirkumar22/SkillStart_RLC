@@ -4,13 +4,15 @@ import { db } from '../../firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore'
 import { useMemo } from "react";
 
-function EmployerProfile({ user }) {
-    const [edit, setEdit] = useState(false);
-    const [formData, setFormData] = useState({ companyName: "", location: "", address: "" })
-    const [loading, setLoading] = useState(false);
+function EmployerProfile({ user }) { // Create EmployerProfile Component, Prop of user object
+    const [edit, setEdit] = useState(false); // State for editing profile
+    const [formData, setFormData] = useState({ companyName: "", location: "", address: "" }) // State for data on edit page
+    const [loading, setLoading] = useState(false); // State for submission loading
 
+    // Obtain reference to firebase document of user with memo
     const userRef = useMemo(() => doc(db, 'users', user.uid), [user.uid]);
-
+    // Set formData via fetched data from firebase
+    // Handle loading state
     useEffect(() => {
         setLoading(true);
         setFormData({ companyName: "Loading...", location: "Loading...", address: "Loading..." })
@@ -22,12 +24,12 @@ function EmployerProfile({ user }) {
         setFormData({ companyName: "", location: "", address: "" })
         fetchUserData();
     }, [userRef])
-
+    // Update formData prop on form inputs
     const handleFormChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
     }
-
+    // Update loading prop, save doc to firebase on save
     const handleEditChange = async () => {
         if (edit) {
             setLoading(true);

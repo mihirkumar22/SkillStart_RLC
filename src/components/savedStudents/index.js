@@ -52,16 +52,18 @@ function SavedStudents() {
                                 Bookmarked Students:
                             </Card.Text>
                         </Card.Body>
-                        <div style={{ display: 'flex', justifyContent: 'center' }}>
+                        <div style={{ alignItems: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                             {loading
                                 ? <Card.Text>Loading...</Card.Text>
                                 : savedStudentsIds.length > 0 ? (
                                     savedStudentsIds.map((student, index) => (
-                                        <Card.Text style={{ marginBottom: '8px'}} key={index}>
-                                            <Link key={index} to={`/view-profile/${student}`}>
-                                                {savedStudentsNames[index] || "Unknown user"}
-                                            </Link>
-                                        </Card.Text>
+                                        <>
+                                            <Card.Text style={{ marginBottom: '8px' }} key={index}>
+                                                <Link key={index} to={`/view-profile/${student}`}>
+                                                    {savedStudentsNames[index] || "Unknown user"}
+                                                </Link>
+                                            </Card.Text>
+                                        </>
                                     ))
                                 ) : (
                                     <Card.Text>No saved students found.</Card.Text>
