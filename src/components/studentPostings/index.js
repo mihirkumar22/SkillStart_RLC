@@ -3,16 +3,17 @@ import NavBar from '../navbar';
 import { Card, Button } from 'react-bootstrap';
 import { useAuth } from '../../contexts/AuthContext';
 import { db } from '../../firebase';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import ReactQuill from 'react-quill';
 import { format } from 'date-fns';
 import background from '../images/tree-bg.png';
 
 function StudentPostings() {
     const { user } = useAuth();
-    const [postings, setPostings] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [tagsEnabled, setTagsEnabled] = useState([]);
+    const [ postings, setPostings ] = useState([]);
+    const [ loading, setLoading ] = useState(false);
+    const [ tagsEnabled, setTagsEnabled ] = useState([]);
+    const [ applyLoading, setApplyLoading ] = useState(false)
 
     useEffect(() => {
         if (!user) {
@@ -47,6 +48,36 @@ function StudentPostings() {
             return format(date, "EEE, MMM dd, yyyy")
         }
         return "Date not available"
+    }
+
+    const handleApply = async (posting) => {
+        const postingDoc = doc(db, 'postings', posting.id)
+
+        setApplyLoading(true);
+
+        if (posting.applicants.includes(user.uid)) {
+            await updateDoc(postingDoc, { applicants: arrayRemove(user.uid) });
+
+            setPostings((prev) =>
+                prev.map((p) =>
+                    p.id === posting.id
+                        ? { ...p, applicants: p.applicants.filter((id) => id !== user.uid) }
+                        : p
+                )
+            )
+        } else {
+            await updateDoc(postingDoc, { applicants: arrayUnion(user.uid) });
+
+            setPostings((prev) =>
+                prev.map((p) =>
+                    p.id === posting.id
+                        ? { ...p, applicants: [...p.applicants, user.uid] }
+                        : p
+                )
+            )
+        }
+
+        setApplyLoading(false);
     }
 
     const tags = ["Retail", "Fast Food", "Tech", "Volunteer", "Office Work", "Part-time", "Weekend Work", "Afterschool"]
@@ -99,6 +130,12 @@ function StudentPostings() {
                                         <Card.Body>
                                             <Card.Header className="d-flex align-items-center">
                                                 <Card.Title className='w-100 text-center'><strong>{posting.title}</strong></Card.Title>
+                                                <Button
+                                                    disabled={applyLoading}
+                                                    onClick={() => handleApply(posting)}
+                                                >
+                                                    {applyLoading ? "Loading..." : posting.applicants.includes(user.uid) ? "Unapply" : "Apply"}
+                                                </Button>
                                             </Card.Header>
                                             <Card.Text>
                                                 <div style={{ width: '100%', flexWrap: 'wrap', display: 'flex', flexDirection: 'row', marginBottom: '0.5em', marginTop: '1em' }}>
