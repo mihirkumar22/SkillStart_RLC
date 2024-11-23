@@ -1,0 +1,80 @@
+.navbar {
+    display: grid;                     /* Use grid for layout */
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* Equal-sized columns */
+    padding-top: 8px;
+    padding-bottom: 8px;                       /* Full width */
+    background-color: white;           /* Navbar background */
+    gap: 0;                             /* Remove spacing between divs */
+    color: black;
+}
+
+.navdiv {
+    display: flex;                     /* Ensure buttons fill each cell */
+    justify-content: center;           /* Center the button inside its div */
+    align-items: center;
+    border-left: 1px solid #ccc;       /* Add a border between buttons */
+    border-right: 1px solid #ccc;      /* Add a border between buttons */
+    color: black;
+    right: 20px;                       /* Adjust the distance from the right edge */
+    background-color: white;
+}
+
+/* Remove the right border on the last div */
+.navdiv:last-child {
+    border-right: none;
+}
+
+.navOption {
+    width: 100%;                       /* Button stretches to fill its div */
+    padding: 10px;                     /* Adjust padding for better appearance */
+    border: none;                      /* Remove borders */
+    outline: none;                     /* Remove focus outline */
+    background-color: white;           /* Default button color */
+    transition: background-color 0.3s; /* Smooth hover and active effect */
+    text-align: center;                /* Center button text */
+    color: black;
+    border-radius: 0;                  /* Remove curved edges */
+}
+
+.navOption:hover {
+    background-color: grey;    /* Change color on hover */
+}
+
+.navOption.active {
+    background-color: gray;            /* Active button color */
+    color: white;                      /* Active text color */
+}
+
+
+.logo {
+    width: 50px;
+    height: auto; 
+    position: absolute;               /* Position the logo absolutely    */ 
+}   
+
+.logocontainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    right: 5px; 
+}
+
+.homelogo {
+    width: 100%;                       /* Button stretches to fill its div */
+    padding: 10px;                     /* Adjust padding for better appearance */
+    border: none;                      /* Remove borders */
+    outline: none;                     /* Remove focus outline */
+    background-color: transparent;           /* Default button color */
+    transition: background-color 0.3s; /* Smooth hover and active effect */
+    text-align: center;                /* Center button text */
+    color: black;
+    border-radius: 0;                  /* Remove curved edges */
+}
+
+.homelogo:hover {
+    background-color: transparent;    /* Change color on hover */
+}
+
+.homelogo.active {
+    background-color: transparent;            /* Active button color */
+}

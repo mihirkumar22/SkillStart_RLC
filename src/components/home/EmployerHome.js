@@ -70,7 +70,7 @@ function EmployerHome({ user }) {
         }
     }
 
-    const tags = ["tag 1", "tag 2", "tag 3", "tag 4", "tag 5"]
+    const tags = ["Retail", "Fast Food", "Tech", "Volunteer", "Office Work", "Part-time", "Weekend Work", "Afterschool"]
 
     const handleTagChange = async (tag) => {
         const prevSelectedTags = formData.selectedTags;
@@ -87,7 +87,7 @@ function EmployerHome({ user }) {
         <div style={{ height: '75vh' }}>
             <Card style={{ background: 'none' }}>
                 <Card.Body className="d-flex flex-column align-items-center">
-                    <Card.Text className='text-center' style={{ marginTop: '3em', fontSize: '2em', color: 'white' }}>Welcome, {userData.companyName ? userData.companyName : email}!</Card.Text>
+                    <Card.Text className='text-center' style={{ marginTop: '3em', fontSize: '2em', color: 'white' }}>Welcome, <strong>{userData.companyName ? userData.companyName : email}!</strong></Card.Text>
                     <Button style={{ minWidth: '200px', width: '40vh', marginTop: '5vh' }} variant="success" onClick={handleShow}>+ Make a new posting</Button>
                     <Button style={{ minWidth: '200px', width: '40vh', marginTop: '5vh' }} variant="success" onClick={() => {navigate('/employer-postings')}}>View your postings</Button>
                     <Button style={{ minWidth: '200px', width: '40vh', marginTop: '5vh' }} variant="success" onClick={() => {navigate('/saved-students')}}>View bookmarked students</Button>

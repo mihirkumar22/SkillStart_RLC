@@ -4,10 +4,9 @@ import { Card } from "react-bootstrap";
 function AdminHome({ user }) {
     return (
         <div style={{ height: '75vh'}}>
-            <Card className="h-100">
+            <Card style={{ background: 'none' }}className="h-100">
                 <Card.Body className="d-flex flex-column">
-                    <Card.Title className="text-center">Home Page</Card.Title>
-                    <Card.Text className="text-center" style={{ marginTop: '4em', fontSize: '2em' }}>Welcome, {user.username || user.email}!</Card.Text>
+                    <Card.Text className="text-center" style={{ marginTop: '3em', fontSize: '2em', color: 'white' }}>Welcome, <strong>{user.username || user.email}!</strong></Card.Text>
                 </Card.Body>
             </Card>
         </div>

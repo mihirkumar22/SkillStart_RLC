@@ -83,7 +83,7 @@ function EmployerPostings() {
         }
     }
 
-    const tags = ["tag 1", "tag 2", "tag 3", "tag 4", "tag 5"]
+    const tags = ["Retail", "Fast Food", "Tech", "Volunteer", "Office Work", "Part-time", "Weekend Work", "Afterschool"]
 
     const toggleTag = (tag) => {
         if (!tagsEnabled.includes(tag)) {
@@ -134,7 +134,7 @@ function EmployerPostings() {
                             .map((posting) => (
                                 (posting.status === "approved" && !hideApproved) ||
                                     (posting.status === "unapproved" && !hideUnapproved) ? (
-                                    <Card style={{ borderWidth: '2px', width: '50vw', marginBottom: '2em' }} key={posting.id}>
+                                    <Card style={{ minWidth: '400px', borderWidth: '2px', width: '50vw', marginBottom: '2em' }} key={posting.id}>
                                         <Card.Body>
                                             <Card.Header className="d-flex align-items-center">
                                                 <Card.Title style={{ flex: 1 }}><strong>{posting.title}</strong></Card.Title>

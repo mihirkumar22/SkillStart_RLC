@@ -84,7 +84,7 @@ function ViewProfile() {
             <NavBar />
             <Card style={{ flex: 1, border: 'none' }}>
                 <Card.Body style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', backgroundImage: `url(${background})`, backgroundSize: 'cover' }}>
-                    <Card style={{ width: '40vw' }}>
+                    <Card style={{ width: '40vw', minWidth: '300px' }}>
                         <Card.Body style={{ display: 'flex', flexDirection: 'column' }}>
                             <Card.Text style={{ fontSize: '2em', textAlign: 'center', width: '100%', marginBottom: '0px' }}>
                                 {applicant.username} Profile

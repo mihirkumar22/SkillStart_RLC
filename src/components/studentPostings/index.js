@@ -49,7 +49,7 @@ function StudentPostings() {
         return "Date not available"
     }
 
-    const tags = ["tag 1", "tag 2", "tag 3", "tag 4", "tag 5"]
+    const tags = ["Retail", "Fast Food", "Tech", "Volunteer", "Office Work", "Part-time", "Weekend Work", "Afterschool"]
 
     const toggleTag = (tag) => {
         if (!tagsEnabled.includes(tag)) {
@@ -74,8 +74,8 @@ function StudentPostings() {
         <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
             <NavBar role="employer" />
             <Card style={{ flex: 1, border: 'none' }}>
-                <Card.Body className='d-flex align-items-center flex-column' style={{ backgroundImage: `url(${background})`, backgroundSize: 'cover' }}>  
-                    <Card.Title style={{ marginTop: '0.1em', fontSize: '2em', color: 'white' }}>Your postings</Card.Title>
+                <Card.Body className='d-flex align-items-center flex-column' style={{ backgroundImage: `url(${background})`, backgroundSize: 'cover' }}>
+                    <Card.Title style={{ marginTop: '0.1em', fontSize: '2em', color: 'white' }}>Your applications</Card.Title>
                     <div style={{ display: 'flex', flexDirection: 'row', marginBottom: '1em' }}>
                         {tags.map((tag) => (
                             <Button
@@ -95,13 +95,13 @@ function StudentPostings() {
                             .filter((posting) => posting.isVisible !== false)
                             .map((posting) => (
                                 (
-                                    <Card style={{ borderWidth: '2px', width: '50vw', marginBottom: '2em' }} key={posting.id}>
+                                    <Card style={{ minWidth: '300px', borderWidth: '2px', width: '50vw', marginBottom: '2em' }} key={posting.id}>
                                         <Card.Body>
                                             <Card.Header className="d-flex align-items-center">
                                                 <Card.Title className='w-100 text-center'><strong>{posting.title}</strong></Card.Title>
                                             </Card.Header>
                                             <Card.Text>
-                                                <div style={{ width: '100%', display: 'flex', flexDirection: 'row', marginBottom: '0.5em', marginTop: '1em' }}>
+                                                <div style={{ width: '100%', flexWrap: 'wrap', display: 'flex', flexDirection: 'row', marginBottom: '0.5em', marginTop: '1em' }}>
                                                     {posting.selectedTags?.length > 0
                                                         ? posting.selectedTags.map((tag) => (
                                                             <Button style={{ marginRight: '1em' }} key={tag} variant="success" disabled>
@@ -110,9 +110,10 @@ function StudentPostings() {
                                                         ))
                                                         : "No tags"}{" "}
                                                 </div>
-                                                <strong>Location:</strong> {posting.location} <br />
-                                                <strong>Address:</strong> {posting.address} <br />
-                                                <strong>Status:</strong> {posting.status} <br />
+                                                <div>
+                                                    <strong>Location:</strong> {posting.location} <br />
+                                                    <strong>Address:</strong> {posting.address} <br />
+                                                </div>
                                                 <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
                                                     <Card.Text style={{ marginBottom: '0.5em' }}><strong>Description:</strong></Card.Text>
                                                     <ReactQuill
@@ -129,7 +130,7 @@ function StudentPostings() {
                                 )
                             ))
                     ) : (
-                        <Card.Text style={{color: 'white'}}>No postings found</Card.Text>
+                        <Card.Text style={{ color: 'white' }}>No postings found</Card.Text>
                     )}
                 </Card.Body>
             </Card>

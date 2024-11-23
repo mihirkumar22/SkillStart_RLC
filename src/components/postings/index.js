@@ -124,8 +124,7 @@ function Postings() {
         }
     }
 
-    const tags = ["tag 1", "tag 2", "tag 3", "tag 4", "tag 5"]
-
+    const tags = ["Retail", "Fast Food", "Tech", "Volunteer", "Office Work", "Part-time", "Weekend Work", "Afterschool"]
     const toggleTag = (tag) => {
         if (!tagsEnabled.includes(tag)) {
             setTagsEnabled((prev) => [...prev, tag]);
@@ -179,7 +178,7 @@ function Postings() {
                             .map((posting) => (
                                 (posting.status === "approved" && !hideApproved) ||
                                     (posting.status === "unapproved" && !hideUnapproved) ? (
-                                    <Card style={{ borderWidth: '2px', width: '50vw', marginBottom: '2em' }} key={posting.id}>
+                                    <Card style={{ minWidth: '300px', borderWidth: '2px', width: '50vw', marginBottom: '2em' }} key={posting.id}>
                                         <Card.Body>
                                             <Card.Header className="d-flex align-items-center position-relative">
                                                 {role !== 'admin' && role !== 'student' &&
@@ -205,7 +204,7 @@ function Postings() {
                                                 )}
                                             </Card.Header>
                                             <Card.Text>
-                                                <div style={{ width: '100%', display: 'flex', flexDirection: 'row', marginBottom: '0.5em', marginTop: '1em' }}>
+                                                <div style={{ width: '100%', display: 'flex', flexWrap: 'wrap', flexDirection: 'row', marginBottom: '0.5em', marginTop: '1em' }}>
                                                     {posting.selectedTags?.length > 0
                                                         ? posting.selectedTags.map((tag) => (
                                                             <Button style={{ marginRight: '1em' }} key={tag} variant="success" disabled>
@@ -236,7 +235,7 @@ function Postings() {
                                 ) : null
                             ))
                     ) : (
-                        <Card.Text>No postings found</Card.Text>
+                        <Card.Text style={{ color: 'white' }}>No postings found</Card.Text>
                     )}
                 </Card.Body>
             </Card>
